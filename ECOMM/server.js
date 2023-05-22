@@ -12,7 +12,7 @@ let exprerssApp = express();
 //All Middleware Should Be Above router
 exprerssApp.use(bodyParser.json());
 exprerssApp.use(router);
-exprerssApp.use(ErrorHandler);
+//exprerssApp.use(ErrorHandler);
 Categories.hasMany(Products);
 let init=async()=>
 {

@@ -12,7 +12,7 @@ let getAllProducts=async(req,res,next)=>
         products=[...await filterByCategory(categoryId)];
     }
     else if(minPrice&&maxPrice)products=[...await filterByPriceRange(minPrice,maxPrice)];
-    else products=await [...Products.findAll()];
+    else products=[...await Products.findAll()];
     //res.writeHead(200,{'Content-Type':'application/json'});
     res.send(JSON.stringify(products));
     res.end();
