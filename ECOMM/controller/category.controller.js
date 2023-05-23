@@ -1,29 +1,26 @@
-let Categories=require('./../model/category');
+let db=require('./../model');
 let sequelizeInstance=require('./../config/db.Config');
 //expressApp.use(bodyParser.json());
 let getAllCategories=async(req,res,next)=>
 {
-    let categories=await Categories.findAll();
+    let categories=await db.categories.findAll();
     //res.writeHead(200,{'Content-Type':'application/json'});
-    res.send(JSON.stringify(categories));
-    res.end();
+    res.status(200).json(categories);
 }
 //UI=>route=>controller=>model=>sqlconnection
 let getCategorybyId=async (req,res,next)=>
 {
     let id=req.params.categoryId;
     if(!id){res.status(400).send('ID not passed')}
-    let categories=await Categories.findAll({
+    let categories=await db.categories.findAll({
         where:{id:id,},
     });
-    res.writeHead(200,{'Content-type':'application/json'})
-    res.write(JSON.stringify(categories));
-    res.end();
+    res.status(200).json(categories);
 }
 let addNewCategory=async(req,res,next)=>
 {
     let category=req.body;
-        await Categories.create({
+        await db.categories.create({
             name:category.name
         });
         res.status(201).send('Data Added');
@@ -40,7 +37,7 @@ let addNewCategory=async(req,res,next)=>
 let deleteCategoryById=async(req,res,next)=>
 {
     let id=req.params.categoryId;
-    await Categories.destroy({
+    await db.categories.destroy({
         where:{id:id}
     });
     res.status(200).send('Category Deleted');
@@ -59,11 +56,11 @@ let updateCategoryById=async(req,res,next)=>
     let categoryToUpdate={
         name:req.body.name
     };
-    await Categories.update(categoryToUpdate,
+    await db.categories.update(categoryToUpdate,
         {
             where :{id:id}
         });
-    let updateCategory=await Categories.findByPk(id);
+    let updateCategory=await db.categories.findByPk(id);
     res.status(200).send(updateCategory);
     res.end();
 }

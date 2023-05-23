@@ -1,17 +1,17 @@
-let db=require('./../config/db.Config');
-const sequelize=require('sequelize');
-let Cart=db.define('cart',
-{
+module.exports=(sequelize,dbConnection)=>{
+    let Cart=dbConnection.define('cart',
+    {
     id:{
         type:sequelize.DataTypes.INTEGER,
         primaryKey:true,
         autoIncrement:true,
-    },
-    cost:{
+        },
+        cost:{
         type:sequelize.DataTypes.DECIMAL,
+        },
     },
-},
-{
-    timestamps:false,
-});
-module.exports=Cart;
+    {
+        timestamps:false,
+    });
+    return Cart;
+};

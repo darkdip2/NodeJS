@@ -1,10 +1,8 @@
 const db=require('./../model/index');
-const Product=db.product;
-const Cart=db.cart;
 let createCart=async(req,res,next)=>{
     const cart={cost:0}
     try{
-        await Cart.create(cart);
+        await db.cart.create(cart);
         res.status(200).json({
             message:'Cart Created',
         });
@@ -18,10 +16,10 @@ let createCart=async(req,res,next)=>{
 };
 let updateCart=async(req,res,next)=>{
     let cartId=req.params.cartId;
-    let cartToUpdate=await Cart.findByPk(cartId);
+    let cartToUpdate=await db.cart.findByPk(cartId);
     if(cartToUpdate)
     {
-        let productsToAdd=await Product.findAll({
+        let productsToAdd=await db.product.findAll({
             where:{id:req.body.productId,},
         });
         if(productsToAdd)
@@ -50,7 +48,7 @@ let updateCart=async(req,res,next)=>{
     else res.status(404).json({message:'Cart Not Found'});
 };
 let getCart=async(req,res,next)=>{
-    let cart=await Cart.findByPk(req.params.cartId);
+    let cart=await db.cart.findByPk(req.params.cartId);
     let totalCost=0;
     let productsSelected=[];
     let products=await cart.getProducts();

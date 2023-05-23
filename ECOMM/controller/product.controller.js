@@ -1,6 +1,18 @@
-let Products=require('./../model/product');
+let db=require('./../model');
 let sequelizeInstance=require('./../config/db.Config');
-let sequelize=require('sequelize');
+let create=async(req,res,next)=>{
+    let productToAdd=req.body;
+    try{
+        await db.product.create(productToAdd);
+        res.status(201).json(productToAdd);
+    }
+    catch(err)
+    {
+        res.status(500).json({
+            message:'Some Internal Error Occured',
+        });
+    }
+};
 let getAllProducts=async(req,res,next)=>
 {
     //if(Object.keys(req.query).length==0)=>FindAll
@@ -12,26 +24,26 @@ let getAllProducts=async(req,res,next)=>
         products=[...await filterByCategory(categoryId)];
     }
     else if(minPrice&&maxPrice)products=[...await filterByPriceRange(minPrice,maxPrice)];
-    else products=[...await Products.findAll()];
+    else products=[...await db.product.findAll()];
     //res.writeHead(200,{'Content-Type':'application/json'});
     res.send(JSON.stringify(products));
     res.end();
 }
 let filterByCategory=async(categoryId)=>
 {
-    let filterProducts=await Products.findAll({
+    let filterProducts=await db.product.findAll({
         where:{categoryId:categoryId,},
     });
     return filterProducts;
 }
 let filterByPriceRange=async(minPrice,maxPrice)=>
 {
-    let filteredProducts=await Products.findAll(
+    let filteredProducts=await db.product.findAll(
         {
             where:{
                 price:{
-                    [sequelize.Op.gte]:minPrice,
-                    [sequelize.Op.lte]:maxPrice,
+                    [db.sequelize.Op.gte]:minPrice,
+                    [db.sequelize.Op.lte]:maxPrice,
                 }
             },
         }
@@ -43,7 +55,7 @@ let getProductbyId=async(req,res,next)=>
 {
     let id=req.params.productId;
     if(!id){res.status(400).send('ID not passed')}
-    let products=await Products.findAll({
+    let products=await db.product.findAll({
         where:{
             id:id
         }
@@ -67,7 +79,7 @@ let addNewProduct=async(req,res,next)=>
     try
     {
         let product=req.body;
-        await Products.create({
+        await db.product.create({
             name:product.name,
             price:product.price,
             categoryId:product.categoryId
@@ -89,7 +101,7 @@ let addNewProduct=async(req,res,next)=>
 let deleteProductById=async(req,res,next)=>
 {
     let id=req.params.productId;
-    await Products.destroy({
+    await db.product.destroy({
         where:{id:id}
     });
     res.status(200).send('Product Deleted');
@@ -103,7 +115,7 @@ let updateProductById=async(req,res,next)=>
         price:req.body.price,
         categoryId:req.body.categoryId
     };
-    await Products.update(productToUpdate,
+    await db.product.update(productToUpdate,
         {
             where :{id:id}
         });
@@ -116,6 +128,7 @@ let all={
   getProductbyId,
   addNewProduct,
   deleteProductById,
-  updateProductById
+  updateProductById,
+  create,
 }
 module.exports=all
